@@ -8,4 +8,8 @@ RSpec.describe "/articles routes" do
     end
   end
 
+  it "routes to articles#show" do
+    expect(get "/api/v1/articles/1").to route_to("api/v1/articles#show", id: "1")
+  end
+
 end
