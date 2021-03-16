@@ -1,7 +1,8 @@
 class Api::V1::ArticlesController < ApplicationController
   
   def index
-    render json: ArticleSerializer.new(Article.all)
+    articles = Article.recent
+    render json: ArticleSerializer.new(articles)
   end
   
   def show

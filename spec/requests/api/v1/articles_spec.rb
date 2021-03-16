@@ -10,8 +10,8 @@ RSpec.describe Api::V1::ArticlesController, type: :request do
       expect(response).to have_http_status(:ok)
     end
 
-    it "returns a list of articles" do
-      article1 = create(:article)
+    it "returns a list of articles with newest first" do
+      article1 = create(:article, created_at: 1.hour.ago)
       article2 = create(:article)
 
       get "/api/v1/articles"
@@ -19,6 +19,9 @@ RSpec.describe Api::V1::ArticlesController, type: :request do
       expect(json_body[:data].class).to be(Array)
       expect(json_body[:data].count).to eq(2)
       expect(json_body[:data].first[:type]).to eq("article")
+      
+      ids = json_body[:data].map { |article| article[:id].to_i }
+      expect(ids).to eq([article2.id, article1.id])
     end
   end
 
