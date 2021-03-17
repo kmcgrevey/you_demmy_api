@@ -30,7 +30,7 @@ RSpec.describe Api::V1::ArticlesController, type: :request do
       get "/api/v1/articles", params: { page: { number: 2, size: 1 } }
 
       expect(json_body[:data].length).to eq(1)
-      expect(json_body[:data].first[:id]).to eq([article2.id])
+      expect(json_body[:data].first[:id]).to eq(article2.id.to_s)
     end
 
     it "contains pagination links in the response" do
@@ -40,7 +40,7 @@ RSpec.describe Api::V1::ArticlesController, type: :request do
 
       expect(json_body[:links].length).to eq(5)
       expect(json_body[:links].keys).to contain_exactly(
-        "self", "first", "prev", "next", "last"
+        :first, :prev, :next, :last, :self
         )
     end
   end
