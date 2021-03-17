@@ -1,27 +1,18 @@
 class Api::V1::ArticlesController < ApplicationController
-  
+  include Paginable
+
   def index
-    articles = Article.recent
-    paginated = paginator.call(
-      articles,
-      params: paginator_params,
-      base_url: request.url
-    )
-    options = { meta: paginated.meta.to_h, links: paginated.links.to_h }
-    render json: ArticleSerializer.new(paginated.items, options)
+    paginated = paginate(Article.recent)
+    render_collection(paginated)
   end
   
   def show
     article = Article.find(params[:id])
-    render json: ArticleSerializer.new(article)
+    render json: serializer.new(article)
   end
 
-  def paginator
-    JSOM::Pagination::Paginator.new
-  end
-
-  def paginator_params
-    params.permit![:page]
+  def serializer
+    ArticleSerializer
   end
 
 end
