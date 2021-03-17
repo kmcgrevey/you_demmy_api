@@ -27,9 +27,11 @@ gem 'bootsnap', '>= 1.1.0', require: false
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
-gem 'fast_jsonapi'
+gem 'jsonapi-serializer'
 gem 'faraday'
 gem 'figaro'
+gem 'jsom-pagination'
+gem 'jsonapi_errors_handler'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -38,6 +40,7 @@ group :development, :test do
   gem 'pry'
   gem 'factory_bot_rails'
   gem 'faker'
+  gem 'shoulda-matchers'
 end
 
 group :development do
