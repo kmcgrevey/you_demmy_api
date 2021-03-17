@@ -64,7 +64,19 @@ RSpec.describe Api::V1::ArticlesController, type: :request do
         content: article.content,
         slug: article.slug
       )
-    end      
+    end
+    
+    it "handles 404 error by using JsonapiErrorsHandler GEM" do
+      bogus_id = article.id + 1
+
+      get "/api/v1/articles/#{bogus_id}"
+
+      expect(response).to have_http_status(:not_found)
+      expect(json_body[:errors].first.keys).to contain_exactly(
+        :status, :title, :detail, :source
+      )
+      expect(json_body[:errors].first[:title]).to eq("Record not Found")
+    end
   end
 
 end
