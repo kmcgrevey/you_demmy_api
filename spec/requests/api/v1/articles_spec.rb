@@ -47,16 +47,16 @@ RSpec.describe Api::V1::ArticlesController, type: :request do
 
   describe "#show" do
     let(:article) { create(:article) }
+
+    subject { get "/api/v1/articles/#{article.id}" }
+
+    before { subject }
     
     it "returns a successful response" do
-      get "/api/v1/articles/#{article.id}"
-
       expect(response).to have_http_status(:ok)
     end
 
     it "returns a proper JSON response" do
-      get "/api/v1/articles/#{article.id}"
-
       expect(json_body[:data][:id]).to eq(article.id.to_s)
       expect(json_body[:data][:type]).to eq("article")
       expect(json_body[:data][:attributes]).to eq(
