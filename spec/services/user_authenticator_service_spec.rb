@@ -44,6 +44,12 @@ RSpec.describe UserAuthenticatorService, type: :service do
         expect{ subject }.to change{ User.count }.by(1)
         expect(User.last.name).to eq("John Smith")
       end
+
+      it "should reuse existing registered user" do
+        user = create :user, user_data
+        expect{ subject }.not_to change{ User.count }
+        expect(authenticator.user).to eq(user)
+      end
     end
   end
 
