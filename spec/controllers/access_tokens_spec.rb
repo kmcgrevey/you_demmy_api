@@ -52,6 +52,12 @@ RSpec.describe Api::V1::AccessTokensController, type: :controller do
       it_behaves_like "unauthorized_requests"
     end
 
+    context "when invalid authorization header provided" do
+      before { request.headers["authorization"] = "Invalid token" }
+
+      it_behaves_like "unauthorized_requests"
+    end
+
     context "when valid request" do
 
     end
