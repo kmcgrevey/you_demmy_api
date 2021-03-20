@@ -1,28 +1,12 @@
 require 'rails_helper'
+# NOTE: test setups moved to spec/support/json_errors.rb to DRY code
 
 RSpec.describe Api::V1::AccessTokensController, type: :controller do
-  describe "#create" do
-    context "when invalid request" do
-      let(:error) do
-        {
-          "status": "401",
-          "source": { "pointer": "/code" },
-          "title":  "Authentication code is invalid",
-          "detail": "You must provide valid code to exchange it for token."
-        }
-      end
-
+  describe "POST #create" do
+    context "when no code provided" do
       subject { post :create }
 
-      it "should return a 401 status code" do
-        subject
-        expect(response).to have_http_status(401)
-      end
-
-      it "should return proper JSON body" do
-        subject
-        expect(json_body[:errors]).to include(error)
-      end
+      it_behaves_like "unauthenticated_requests"
     end
 
     context "when successful request" do
@@ -61,28 +45,11 @@ RSpec.describe Api::V1::AccessTokensController, type: :controller do
     end
   end
 
-  describe "#destroy" do
-    context "when invalid request" do
-      let(:authorization_error) do
-        {
-          "status": "403",
-          "source": { "pointer": "/headers/authorization" },
-          "title":  "Not authorized",
-          "detail": "You do not have rights to access this resource."
-        }
-      end
-
-      subject { delete :destroy }
-
-      it "should return a 403 status code" do
-        subject
-        expect(response).to have_http_status(:forbidden)
-      end
-
-      it "should return proper JSON body" do
-        subject
-        expect(json_body[:errors]).to include(authorization_error)
-      end
+  describe "DELETE #destroy" do
+    subject { delete :destroy }
+    
+    context "when no authorization header provided" do
+      it_behaves_like "unauthorized_requests"
     end
 
     context "when valid request" do
