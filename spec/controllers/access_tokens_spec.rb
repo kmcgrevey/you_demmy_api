@@ -61,4 +61,33 @@ RSpec.describe Api::V1::AccessTokensController, type: :controller do
     end
   end
 
+  describe "#destroy" do
+    context "when invalid request" do
+      let(:authorization_error) do
+        {
+          "status": "403",
+          "source": { "pointer": "/headers/authorization" },
+          "title":  "Not authorized",
+          "detail": "You do not have rights to access this resource."
+        }
+      end
+
+      subject { delete :destroy }
+
+      it "should return a 403 status code" do
+        subject
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it "should return proper JSON body" do
+        subject
+        expect(json_body[:errors]).to include(authorization_error)
+      end
+    end
+
+    context "when valid request" do
+
+    end
+  end
+
 end

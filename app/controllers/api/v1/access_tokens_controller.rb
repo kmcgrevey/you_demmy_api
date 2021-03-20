@@ -7,5 +7,9 @@ class Api::V1::AccessTokensController < ApplicationController
     render json: AccessTokenSerializer.new(auth.access_token),
       status: 201
   end
-  
+
+  def destroy
+    raise AuthorizationError
+  end
+
 end
