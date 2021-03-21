@@ -13,11 +13,25 @@ class Api::V1::ArticlesController < ApplicationController
   end
 
   def create
-
+    article = Article.create(article_params)
+    if article.save
+      #success
+    else
+      render json: article, adapter: :json_api,
+        serializer: ErrorSerializer,
+        status: 422
+    end
   end
 
   def serializer
     ArticleSerializer
+  end
+
+  private
+
+  def article_params
+    # params[:article].permit(:title, :content)
+    ActionController::Parameters.new
   end
 
 end
