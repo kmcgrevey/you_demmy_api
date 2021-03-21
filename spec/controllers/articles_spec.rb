@@ -89,4 +89,74 @@ RSpec.describe Api::V1::ArticlesController, type: :controller do
     end
   end
 
+  describe "#update" do
+    let(:article) { create :article }
+
+    subject { patch :update, params: { id: article.id } }
+
+    context "when no code provided" do
+      it_behaves_like "unauthorized_requests"
+    end
+   
+    context "when invalid code provided" do
+      before { request.headers["authorization"] = "Invalid token" }
+      it_behaves_like "unauthorized_requests"
+    end
+
+    context "when authorized" do
+      let(:access_token) { create :access_token }
+      before { request.headers["authorization"] = "Bearer #{access_token.token}" }
+
+      context "when invalid parameters provided" do
+        let(:invalid_attributes) do
+          {
+            data: {
+              attributes: {
+                title: "Updated Title",
+                content: ""
+              }
+            }
+          }
+        end
+
+        subject { patch :update, params: invalid_attributes.merge(id: article.id) }
+
+        it "should return 422 status code" do
+          subject
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+      end
+
+      context "when success request sent" do
+        let(:valid_attributes) do
+          {
+            data: {
+              attributes: {
+                title: "Updated Test Title",
+                content: "Updated test article content"
+              }
+            }
+          }
+        end
+
+        subject { patch :update, params: valid_attributes.merge(id: article.id) }
+
+        it "should have 200 status code" do
+          subject
+          expect(response).to have_http_status(:ok)
+        end
+
+        it "should have proper JSON body" do
+          subject
+          expect(json_body[:data][:attributes]).to include(valid_attributes[:data][:attributes])
+        end
+
+        it "should update the article" do
+          subject
+          expect(article.reload.title).to eq(valid_attributes[:data][:attributes][:title])
+        end
+      end
+    end
+  end
+
 end

@@ -22,6 +22,14 @@ class Api::V1::ArticlesController < ApplicationController
       status: 422
   end
 
+  def update
+    article = Article.find(params[:id])
+    article.update!(article_params)
+    render json: serializer.new(article), status: 200
+  rescue
+    render json: {}, status: 422
+  end
+
   def serializer
     ArticleSerializer
   end
