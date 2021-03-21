@@ -14,13 +14,12 @@ class Api::V1::ArticlesController < ApplicationController
 
   def create
     article = Article.create(article_params)
-    if article.save
-      render json: serializer.new(article), status: 201
-    else
-      render json: article, adapter: :json_api,
-        serializer: ErrorSerializer,
-        status: 422
-    end
+    article.save!
+    render json: serializer.new(article), status: 201
+  rescue
+    render json: article, adapter: :json_api,
+      serializer: ErrorSerializer,
+      status: 422
   end
 
   def serializer

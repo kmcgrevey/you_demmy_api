@@ -37,6 +37,8 @@ RSpec.describe Api::V1::ArticlesController, type: :controller do
         end
 
         xit "should return proper error JSON" do
+          # need to refactor test due to reliance on 
+          # depricated 'active_model_sericalizers gem
           subject
           expect(json_body[:errors]).to include(
             {
