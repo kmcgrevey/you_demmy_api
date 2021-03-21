@@ -15,7 +15,7 @@ class Api::V1::ArticlesController < ApplicationController
   def create
     article = Article.create(article_params)
     if article.save
-      #success
+      render json: serializer.new(article), status: 201
     else
       render json: article, adapter: :json_api,
         serializer: ErrorSerializer,
@@ -30,7 +30,8 @@ class Api::V1::ArticlesController < ApplicationController
   private
 
   def article_params
-    # params[:article].permit(:title, :content)
+    params.require(:data).require(:attributes)
+      .permit(:title, :content, :slug) ||
     ActionController::Parameters.new
   end
 
