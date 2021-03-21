@@ -2,7 +2,7 @@ class ApplicationController < ActionController::API
   include JsonapiErrorsHandler
   
   class AuthorizationError < StandardError; end
-  
+
   rescue_from ::StandardError, with: lambda { |e| handle_error(e) }
 
   rescue_from UserAuthenticatorService::AuthenticationError, with:
@@ -11,11 +11,26 @@ class ApplicationController < ActionController::API
   rescue_from AuthorizationError, with:
     :authorization_error
 
+  before_action :authorize!
+
   ErrorMapper.map_errors!(
       'ActiveRecord::RecordNotFound' => 'JsonapiErrorsHandler::Errors::NotFound'
   )
 
   private
+
+  def authorize!
+    raise AuthorizationError unless current_user
+  end
+
+  def access_token
+    provided_token = request.authorization&.gsub("Bearer ", "")
+    @access_token = AccessToken.find_by(token: provided_token)
+  end
+
+  def current_user
+    @current_user = access_token&.user
+  end
 
   def authentication_error
     error = {
