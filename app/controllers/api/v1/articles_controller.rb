@@ -12,6 +12,10 @@ class Api::V1::ArticlesController < ApplicationController
     render json: serializer.new(article)
   end
 
+  def create
+
+  end
+
   def serializer
     ArticleSerializer
   end
