@@ -3,5 +3,7 @@ FactoryBot.define do
     title { Faker::Book.title }
     content { Faker::Quote.yoda }
     slug { "slug-#{Faker::Beer.unique.yeast}" }
+
+    association :user
   end
 end

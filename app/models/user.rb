@@ -7,4 +7,6 @@ class User < ApplicationRecord
             uniqueness: true
 
   has_one :access_token, dependent: :destroy
+
+  has_many :articles, dependent: :destroy
 end
