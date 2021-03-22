@@ -13,7 +13,8 @@ class Api::V1::ArticlesController < ApplicationController
   end
 
   def create
-    article = Article.create(article_params)
+    # article = Article.create(article_params)
+    article = current_user.articles.create(article_params)
     article.save!
     render json: serializer.new(article), status: 201
   rescue
@@ -23,9 +24,12 @@ class Api::V1::ArticlesController < ApplicationController
   end
 
   def update
-    article = Article.find(params[:id])
+    # article = Article.find(params[:id])
+    article = current_user.articles.find(params[:id])
     article.update!(article_params)
     render json: serializer.new(article), status: 200
+  rescue ActiveRecord::RecordNotFound
+    authorization_error
   rescue
     render json: {}, status: 422
   end
