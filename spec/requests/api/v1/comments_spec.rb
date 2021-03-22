@@ -1,16 +1,24 @@
 require 'rails_helper'
 
 RSpec.describe "/comments", type: :request do
-  let(:valid_headers) {
-    {}
-  }
-
   let(:article) { create :article }
 
   describe "GET /index" do
+    subject { get api_v1_article_comments_path(article.id) }
+    
     it "renders a successful response" do
-      get api_v1_article_comments_path(article.id)
+      subject
       expect(response).to have_http_status(:ok)
+    end
+
+    it "should only return comments belonging to article" do
+      create_list(:comment, 3)
+      comment = create(:comment, article_id: article.id)
+
+      subject
+ 
+      expect(json_body[:data].length).to eq(1)
+      expect(json_body[:data].first[:id]).to eq(comment.id.to_s)
     end
   end
 
@@ -57,7 +65,7 @@ RSpec.describe "/comments", type: :request do
         it "renders a JSON response with errors for the new comment" do
           post api_v1_article_comments_path(article.id),
               params: { article_id: article.id, comment: invalid_attributes }
-              
+
           expect(response).to have_http_status(:unprocessable_entity)
           expect(response.content_type).to eq("application/json")
         end

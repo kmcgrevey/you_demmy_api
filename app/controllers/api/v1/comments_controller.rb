@@ -1,20 +1,20 @@
 class Api::V1::CommentsController < ApplicationController
   skip_before_action :authorize!, only: [:index]
-  before_action :load_article, only: [:create]
+  before_action :load_article
  
   def index
-    @comments = Comment.all
+    comments = @article.comments
 
-    render json: @comments
+    render json: CommentSerializer.new(comments), status: 200
   end
 
   def create
-    @comment = @article.comments.create(comment_params.merge(user: current_user))
+    comment = @article.comments.create(comment_params.merge(user: current_user))
 
-    if @comment.save
-      render json: @comment, status: :created, location: @api_v1_article
+    if comment.save
+      render json: comment, status: :created, location: @api_v1_article
     else
-      render json: @comment.errors, status: :unprocessable_entity
+      render json: comment.errors, status: :unprocessable_entity
     end
   end
 
