@@ -20,6 +20,16 @@ RSpec.describe "/comments", type: :request do
       expect(json_body[:data].length).to eq(1)
       expect(json_body[:data].first[:id]).to eq(comment.id.to_s)
     end
+
+    it "paginates results" do
+      comment1, comment2, comment3 = create_list(:comment, 3, article_id: article.id)
+
+      get api_v1_article_comments_path(article.id),
+        params: { page: { number: 2, size: 1 } }
+
+      expect(json_body[:data].length).to eq(1)
+      expect(json_body[:data].first[:id]).to eq(comment2.id.to_s)
+    end
   end
 
   describe "POST /create" do
