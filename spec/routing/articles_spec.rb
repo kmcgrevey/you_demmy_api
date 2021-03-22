@@ -20,5 +20,9 @@ RSpec.describe "/articles routes" do
     expect(patch "/api/v1/articles/1").to route_to("api/v1/articles#update", id: "1")
     expect(put "/api/v1/articles/1").to route_to("api/v1/articles#update", id: "1")
   end
+  
+  it "routes to articles#destroy" do
+    expect(delete "/api/v1/articles/1").to route_to("api/v1/articles#destroy", id: "1")
+  end
 
 end
