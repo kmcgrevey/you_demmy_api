@@ -30,6 +30,23 @@ RSpec.describe "/comments", type: :request do
       expect(json_body[:data].length).to eq(1)
       expect(json_body[:data].first[:id]).to eq(comment2.id.to_s)
     end
+
+    it "should have proper JSON body" do
+      comment = create(:comment, article_id: article.id)
+
+      subject
+
+      expect(json_body[:data].first[:attributes]).to eq(content: comment.content)
+    end
+
+    it "should have related objects information in the response" do
+      create(:comment, article_id: article.id)
+
+      subject
+
+      expect(json_body[:data].first[:relationships]).to have_key(:article)
+      expect(json_body[:data].first[:relationships]).to have_key(:user)
+    end
   end
 
   describe "POST /create" do
