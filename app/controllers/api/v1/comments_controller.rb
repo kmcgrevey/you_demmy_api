@@ -12,7 +12,7 @@ class Api::V1::CommentsController < ApplicationController
     comment = @article.comments.create(comment_params.merge(user: current_user))
 
     if comment.save
-      render json: comment, status: :created, location: @api_v1_article
+      render json: serializer.new(comment), status: :created
     else
       render json: comment.errors, status: :unprocessable_entity
     end
