@@ -3,10 +3,10 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::AccessTokensController, type: :controller do
   describe "POST #create" do
-    context "when no code provided" do
+    context "when no auth_data provided" do
       subject { post :create }
 
-      it_behaves_like "unauthenticated_requests"
+      it_behaves_like "unauthorized_standard_requests"
     end
 
     context "when successful request" do
@@ -49,13 +49,13 @@ RSpec.describe Api::V1::AccessTokensController, type: :controller do
     subject { delete :destroy }
     
     context "when no authorization header provided" do
-      it_behaves_like "unauthorized_requests"
+      it_behaves_like "forbidden_requests"
     end
 
     context "when invalid authorization header provided" do
       before { request.headers["authorization"] = "Invalid token" }
 
-      it_behaves_like "unauthorized_requests"
+      it_behaves_like "forbidden_requests"
     end
 
     context "when valid request" do
