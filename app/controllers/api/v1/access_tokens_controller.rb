@@ -2,7 +2,7 @@ class Api::V1::AccessTokensController < ApplicationController
   skip_before_action :authorize!, only: :create
 
   def create
-    auth = UserAuthenticatorService.new(params[:code])
+    auth = UserAuthenticatorService.new(authentication_params)
     auth.perform
 
     render json: AccessTokenSerializer.new(auth.access_token),
@@ -11,6 +11,16 @@ class Api::V1::AccessTokensController < ApplicationController
 
   def destroy
     current_user.access_token.destroy
+  end
+
+  private
+
+  def authentication_params
+    (standard_auth_params || params.permit(:code)).to_h.symbolize_keys
+  end
+
+  def standard_auth_params
+    params.dig(:data, :attributes)&.permit(:login, :password)
   end
 
 end

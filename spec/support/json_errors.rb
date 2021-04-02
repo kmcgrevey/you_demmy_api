@@ -1,12 +1,12 @@
 require 'rails_helper'
 
-shared_examples "unauthenticated_requests" do
+shared_examples "unauthorized_standard_requests" do
   let(:authentication_error) do
     {
       "status": "401",
-      "source": { "pointer": "/code" },
-      "title":  "Authentication code is invalid",
-      "detail": "You must provide valid code to exchange it for token."
+      "source": { "pointer": "/data/attributes/password" },
+      "title":  "Invalid login or password",
+      "detail": "You must provide valid credentials to exchange them for token."
     }
   end
 
@@ -21,7 +21,28 @@ shared_examples "unauthenticated_requests" do
   end
 end
 
-shared_examples "unauthorized_requests" do
+shared_examples_for "unauthorized_oauth_requests" do
+  let(:authentication_error) do
+    {
+      "status": "401",
+      "source": { "pointer": "/code" },
+      "title":  "Authentication code is invalid",
+      "detail": "You must provide valid code in order to exchange it for token."
+    }
+  end
+
+  it 'should return 401 status code' do
+    subject
+    expect(response).to have_http_status(401)
+  end
+
+  it 'should return proper JSON body' do
+    subject
+    expect(json_body[:errors]).to include(authentication_error)
+  end
+end
+
+shared_examples "forbidden_requests" do
   let(:authorization_error) do
     {
       "status": "403",

@@ -53,7 +53,7 @@ RSpec.describe "/comments", type: :request do
  
     context "when not authorized" do
       subject { post api_v1_article_comments_path(article.id) }
-      it_behaves_like "unauthorized_requests"
+      it_behaves_like "forbidden_requests"
     end
 
     context "when authorized" do

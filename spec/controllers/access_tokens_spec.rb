@@ -3,10 +3,54 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::AccessTokensController, type: :controller do
   describe "POST #create" do
-    context "when no code provided" do
+    let(:params) do
+      {
+        data: {
+          attributes: { login: "jsmith", password: "password" }
+        }
+      }
+    end
+
+    context "when no auth_data provided" do
       subject { post :create }
 
-      it_behaves_like "unauthenticated_requests"
+      it_behaves_like "unauthorized_standard_requests"
+    end
+
+    context "when invalid login provided" do
+      let(:user) { create :user, login: "wrong", password: "password" }
+      subject { post :create, params: params }
+
+      before { user }
+
+      it_behaves_like "unauthorized_standard_requests"
+    end
+    
+    context "when invalid password provided" do
+      let(:user) { create :user, login: "jsmith", password: "wrong" }
+      subject { post :create, params: params }
+
+      before { user }
+
+      it_behaves_like "unauthorized_standard_requests"
+    end
+    
+    context "when valid login and password provided" do
+      let(:user) { create :user, login: "jsmith", password: "password" }
+      subject { post :create, params: params }
+
+      before { user }
+
+      it "should return 201 status code" do
+        subject
+        expect(response).to have_http_status(:created)
+      end
+
+      it "should return proper JSON body" do
+        subject
+        expect(json_body[:data][:attributes]).to eq(
+          { token: user.access_token.token })
+      end
     end
 
     context "when successful request" do
@@ -49,13 +93,13 @@ RSpec.describe Api::V1::AccessTokensController, type: :controller do
     subject { delete :destroy }
     
     context "when no authorization header provided" do
-      it_behaves_like "unauthorized_requests"
+      it_behaves_like "forbidden_requests"
     end
 
     context "when invalid authorization header provided" do
       before { request.headers["authorization"] = "Invalid token" }
 
-      it_behaves_like "unauthorized_requests"
+      it_behaves_like "forbidden_requests"
     end
 
     context "when valid request" do

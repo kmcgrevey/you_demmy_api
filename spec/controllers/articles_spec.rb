@@ -5,12 +5,12 @@ RSpec.describe Api::V1::ArticlesController, type: :controller do
     subject { post :create }
     
     context "when no code provided" do
-      it_behaves_like "unauthorized_requests"
+      it_behaves_like "forbidden_requests"
     end
    
     context "when invalid code provided" do
       before { request.headers["authorization"] = "Invalid token" }
-      it_behaves_like "unauthorized_requests"
+      it_behaves_like "forbidden_requests"
     end
 
     context "when authorized" do
@@ -97,12 +97,12 @@ RSpec.describe Api::V1::ArticlesController, type: :controller do
     subject { patch :update, params: { id: article.id } }
 
     context "when no code provided" do
-      it_behaves_like "unauthorized_requests"
+      it_behaves_like "forbidden_requests"
     end
    
     context "when invalid code provided" do
       before { request.headers["authorization"] = "Invalid token" }
-      it_behaves_like "unauthorized_requests"
+      it_behaves_like "forbidden_requests"
     end
 
     context "when trying to update not owned article" do
@@ -112,7 +112,7 @@ RSpec.describe Api::V1::ArticlesController, type: :controller do
       subject { patch :update, params: { id: other_article.id } }
       before { request.headers["authorization"] = "Bearer #{access_token.token}" }
 
-      it_behaves_like "unauthorized_requests"
+      it_behaves_like "forbidden_requests"
     end
 
     context "when authorized" do
@@ -180,12 +180,12 @@ RSpec.describe Api::V1::ArticlesController, type: :controller do
     subject { delete :destroy, params: { id: article.id } }
 
     context "when no code provided" do
-      it_behaves_like "unauthorized_requests"
+      it_behaves_like "forbidden_requests"
     end
    
     context "when invalid code provided" do
       before { request.headers["authorization"] = "Invalid token" }
-      it_behaves_like "unauthorized_requests"
+      it_behaves_like "forbidden_requests"
     end
 
     context "when trying to remove not owned article" do
@@ -195,7 +195,7 @@ RSpec.describe Api::V1::ArticlesController, type: :controller do
       subject { delete :destroy, params: { id: other_article.id } }
       before { request.headers["authorization"] = "Bearer #{access_token.token}" }
 
-      it_behaves_like "unauthorized_requests"
+      it_behaves_like "forbidden_requests"
     end
 
     context "when authorized" do
