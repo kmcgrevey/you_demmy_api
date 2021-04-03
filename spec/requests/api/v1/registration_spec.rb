@@ -62,6 +62,16 @@ describe Api::V1::RegistrationController do
         expect{ subject }.to change{ User.count }.by(1)
         expect(User.exists?(login: 'jsmith')).to be_truthy
       end
+
+      xit 'should return proper json' do
+        subject
+        expect(json_body[:data][:attributes]).to eq({
+          'login' => 'jsmith',
+          'avatar-url' => nil,
+          'url' => nil,
+          'name' => nil
+        })
+      end
     end
   end
 
