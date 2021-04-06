@@ -1,12 +1,9 @@
 class User < ApplicationRecord
   include BCrypt
   
-  validates :login,
-            :provider,
-            presence: true
-
-  validates :login,
-            uniqueness: true
+  validates :login, presence: true, uniqueness: true
+  validates :provider, presence: true
+  validates :password, presence: true, if: -> { provider == "standard" }
 
   has_one :access_token, dependent: :destroy
 
@@ -18,6 +15,7 @@ class User < ApplicationRecord
   end
 
   def password=(new_password)
+    return @password = new_password if new_password.blank?
     @password = Password.create(new_password)
     self.encrypted_password = @password
   end
